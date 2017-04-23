@@ -26,6 +26,7 @@ import static android.R.attr.max;
 import static android.R.attr.x;
 import static android.R.attr.y;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 import static java.util.Arrays.asList;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     final int MINARRAY = 0;
     final int MAXARRAY = 3;
     //AI personality thresholds
+    //currently unused, intended for doing math to let the computer fold if the total pot value is too high and cards are not good enough
     int threshold1 = 4500;
     int threshold2 = 3000;
     int threshold3 = 2700;
@@ -186,6 +188,28 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    View.OnClickListener reset = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            pot.setText("0");
+            btnBet.setEnabled(false);
+            btnDeal.setEnabled(true);
+            btnDraw.setEnabled(false);
+            btnReset.setEnabled(false);
+            for(int r = 0; r<5; r++)
+            {
+                if (r != 5)
+                {
+                    pcMaster[r].setVisibility(View.INVISIBLE);
+                    ai1Master[r].setVisibility(View.INVISIBLE);
+                    ai2Master[r].setVisibility(View.INVISIBLE);
+                    dealMaster[r].setVisibility(View.INVISIBLE);
+                }
+            }
+            cardsPlay = cardsMaster;
+            thePot = 0;
+        }
+        };
     View.OnClickListener setBet = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
