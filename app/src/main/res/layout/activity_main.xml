@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.jey.csc408finalprojectattempt2_young.MainActivity"
+    android:background="@android:color/holo_green_dark">
+
+    <Button
+        android:text="Begin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/btnBegin" />
+
+    <Button
+        android:text="Reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnReset"
+        android:layout_alignTop="@+id/btnBegin"
+        android:enabled="false" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgpc2"
+        android:layout_alignTop="@+id/imgpc1"
+        android:layout_toEndOf="@+id/imgpc1"
+        android:clickable="true"
+        android:onClick="pickingCards"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgpc3"
+        android:layout_above="@+id/btnBegin"
+        android:layout_toEndOf="@+id/imgpc2"
+        android:clickable="true"
+        android:onClick="pickingCards"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgpc4"
+        android:layout_alignTop="@+id/imgpc3"
+        android:layout_toEndOf="@+id/imgpc3"
+        android:clickable="true"
+        android:onClick="pickingCards"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgpc1"
+        android:layout_above="@+id/btnReset"
+        android:layout_alignParentStart="true"
+        android:clickable="true"
+        android:onClick="pickingCards"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgai12"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_marginBottom="47dp"
+        android:layout_alignBottom="@+id/imgai11"
+        android:layout_alignParentStart="true"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgai13"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_above="@+id/imgai11"
+        android:layout_alignParentStart="true"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgai14"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_above="@+id/imgai12"
+        android:layout_alignParentStart="true"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgai11"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_marginBottom="16dp"
+        android:layout_above="@+id/imgpc1"
+        android:layout_alignParentStart="true"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgai15"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_above="@+id/imgai13"
+        android:layout_alignParentStart="true"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgai22"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_below="@+id/imgai14"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/imgai12"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgai23"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_above="@+id/imgai21"
+        android:layout_alignStart="@+id/imgai21"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgai24"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_above="@+id/imgai22"
+        android:layout_alignParentEnd="true"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgai25"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_above="@+id/imgai23"
+        android:layout_alignParentEnd="true"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgdc1"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/imgai14"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgdc2"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/btnReset"
+        android:layout_marginStart="22dp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgdc3"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/imgdc1"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgdc4"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/imgdc2"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgdc5"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/imgdc3"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgai21"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:layout_alignTop="@+id/imgai11"
+        android:layout_alignParentEnd="true"
+        android:visibility="invisible"/>
+
+    <Button
+        android:text="Bet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imgpc2"
+        android:layout_toStartOf="@+id/imgdc4"
+        android:id="@+id/btnBet"
+        android:enabled="false" />
+
+    <Button
+        android:text="Draw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imgpc3"
+        android:layout_toEndOf="@+id/btnBet"
+        android:id="@+id/btnDraw"
+        android:enabled="false" />
+
+    <TextView
+        android:text="Total Value:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/imgai12"
+        android:layout_toStartOf="@+id/imgdc4"
+        android:id="@+id/txtPotLabel" />
+
+    <TextView
+        android:text="0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/txtPotLabel"
+        android:layout_toEndOf="@+id/txtPotLabel"
+        android:id="@+id/txtPot" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/editTextBet"
+        android:hint="Enter Bet Value"
+        android:layout_alignBottom="@+id/imgai11"
+        android:layout_toEndOf="@+id/imgai11"
+        android:enabled="false" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/b1fv"
+        android:id="@+id/imgpc5"
+        android:layout_above="@+id/btnBegin"
+        android:layout_toEndOf="@+id/editTextBet"
+        android:onClick="pickingCards"
+        android:clickable="true"
+        android:visibility="invisible" />
+</RelativeLayout>
