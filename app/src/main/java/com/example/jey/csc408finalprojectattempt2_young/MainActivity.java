@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
     Drawable[][] cardsMaster;
     //Secondary array
     Drawable[][] cardsPlay;
-
+// Back of card
+    Drawable cardBack;
     //Variable for value of the pot
     int thePot = 0;
     //Turn markers
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnDraw;
     Button btnReset;
     TextView pot;
+    TextView status;
     View[] pcViews = new View[5];
     View[] ai1Views = new View[5];
     View[] ai2Views = new View[5];
@@ -83,6 +85,20 @@ public class MainActivity extends AppCompatActivity {
             {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}},
             {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}
     };
+    int[][][] Clearhands = new int[][][]{
+            {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}},
+            {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}},
+            {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}},
+            {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}
+    };
+
+    int[][] cardValsMaster = new int[][]{
+            {0,1,2,3,4,5,6,7,8,9,10,11,12},
+            {0,1,2,3,4,5,6,7,8,9,10,11,12},
+            {0,1,2,3,4,5,6,7,8,9,10,11,12},
+            {0,1,2,3,4,5,6,7,8,9,10,11,12}
+    };
+    int [][] cardValsPlay = cardValsMaster;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //a long list of attaching views to Java code
         btnDeal = (Button) findViewById(R.id.btnBegin);
-        Drawable cardBack = ResourcesCompat.getDrawable(getResources(), R.drawable.b1fv, null);
+        cardBack = ResourcesCompat.getDrawable(getResources(), R.drawable.b1fv, null);
         btnBet = (Button) findViewById(R.id.btnBet);
 
         btnDraw = (Button) findViewById(R.id.btnDraw);
@@ -117,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         dealerCard3 = (ImageView) findViewById(R.id.imgdc3);
         dealerCard4 = (ImageView) findViewById(R.id.imgdc4);
         dealerCard5 = (ImageView) findViewById(R.id.imgdc5);
+        status = (TextView) findViewById(R.id.txtWinStatus);
         pcMaster = new ImageView[]{playerCard1, playerCard2, playerCard3, playerCard4, playerCard5};
         ai1Master = new ImageView[]{ai1Card1, ai1Card2, ai1Card3, ai1Card4, ai1Card5};
         ai2Master = new ImageView[]{ai2Card1, ai2Card2, ai2Card3, ai2Card4, ai2Card5};
@@ -131,11 +148,12 @@ public class MainActivity extends AppCompatActivity {
         btnBet.setOnClickListener(setBet);
         btnDeal.setOnClickListener(beginGame);
         btnDraw.setOnClickListener(drawingCards);
+        btnReset.setOnClickListener(reset);
         vg = (RelativeLayout) findViewById(R.id.activity_main);
 
 
     }
-
+//*************************************************************************************************************************************
     public void pickingCards(View v) {
 
         if (asList(pcViews).contains(v) == false && pcViews[cardMarkerpc] == null) {
@@ -155,16 +173,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    ;
+    //*******************************************************************************************************
     View.OnClickListener drawingCards = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
           //  if(cardMarkerpc != 0) {
-                playerRedealer(getMarks(pcViews), hands, cardsPlay);
+                playerRedealer(getMarks(pcViews), hands, cardsPlay, cardValsPlay);
           //  }
 
         }
     };
+    //*************************************************************************************************************
     View.OnClickListener beginGame = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -176,7 +195,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
+//*********************************************************************************************************
+    //Unused countdown timer
     CountDownTimer ctd = new CountDownTimer(2000, 1000) {
 
         public void onTick(long millisUntilFinished) {
@@ -187,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-
+//********************************************************************************************************
     View.OnClickListener reset = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -196,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
             btnDeal.setEnabled(true);
             btnDraw.setEnabled(false);
             btnReset.setEnabled(false);
+            txtInput.setEnabled(false);
+            status.setText("");
             for(int r = 0; r<5; r++)
             {
                 if (r != 5)
@@ -204,35 +226,69 @@ public class MainActivity extends AppCompatActivity {
                     ai1Master[r].setVisibility(View.INVISIBLE);
                     ai2Master[r].setVisibility(View.INVISIBLE);
                     dealMaster[r].setVisibility(View.INVISIBLE);
+                    pcMaster[r].setImageDrawable(cardBack);
+                    ai1Master[r].setImageDrawable(cardBack);
+                    ai2Master[r].setImageDrawable(cardBack);
+                    dealMaster[r].setImageDrawable(cardBack);
+                    pcViews[r] = null;
                 }
             }
-            cardsPlay = cardsMaster;
+            //cardsPlay = cardsMaster;
             thePot = 0;
+            turnMarker = 0;
+            cardMarkerpc = 0;
+            hands = Clearhands;
+            cardValsPlay = cardValsMaster;
         }
         };
+    //******************************************************************************************************
     View.OnClickListener setBet = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String hold1 = txtInput.getText().toString();
+            final String hold1 = txtInput.getText().toString();
             if (turnMarker == 0) {
                 if (hold1 != null) {
-                    thePot += Integer.parseInt(hold1);
-                    pot.setText(Integer.toString(thePot));
-                    getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
+
+                    pot.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            thePot += Integer.parseInt(hold1);
+                            pot.setText(Integer.toString(thePot));
+                        }
+                    }, 100);
+
                     //    SystemClock.sleep(1000);
-                    thePot += Integer.parseInt(hold1);
-                    pot.setText(Integer.toString(thePot));
-                    getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
+
+                    pot.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            thePot += Integer.parseInt(hold1);
+                            pot.setText(Integer.toString(thePot));
+                        }
+                    }, 300);
+
                     //SystemClock.sleep(1000);
-                    thePot += Integer.parseInt(hold1);
-                    pot.setText(Integer.toString(thePot));
-                    getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
+
+                    pot.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            thePot += Integer.parseInt(hold1);
+                            pot.setText(Integer.toString(thePot));
+                        }
+                    }, 500);
+
                     //SystemClock.sleep(1000);
-                    thePot += Integer.parseInt(hold1);
-                    pot.setText(Integer.toString(thePot));
-                    getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
+
+                    pot.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            thePot += Integer.parseInt(hold1);
+                            pot.setText(Integer.toString(thePot));
+                        }
+                    }, 700);
+
                     //SystemClock.sleep(1000);
-                    Dealer(cardsPlay, hands);
+                    Dealer(cardsPlay, hands, cardValsPlay);
                     btnDraw.setEnabled(true);
                     btnBet.setEnabled(false);
                     txtInput.setEnabled(false);
@@ -247,43 +303,18 @@ public class MainActivity extends AppCompatActivity {
             } else if (turnMarker == 1) {
                 if (hold1 != null) {
                     thePot += Integer.parseInt(hold1);
-                    pot.setText(Integer.toString(thePot));
-                    getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
-                    //    SystemClock.sleep(1000);
-                    try {
-                        Thread.sleep(500);
-                    }
-                    catch(InterruptedException e1)
-                    {
+                            pot.setText(Integer.toString(thePot));
 
-                    }
+                    thePot += Integer.parseInt(hold1);
+
+                            pot.setText(Integer.toString(thePot));
+
+                    thePot += Integer.parseInt(hold1);
+                            pot.setText(Integer.toString(thePot));
+
+
                     thePot += Integer.parseInt(hold1);
                     pot.setText(Integer.toString(thePot));
-                    getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
-                    //SystemClock.sleep(1000);
-                    try {
-                        Thread.sleep(500);
-                    }
-                    catch(InterruptedException e1)
-                    {
-
-                    }
-                    thePot += Integer.parseInt(hold1);
-                    pot.setText(Integer.toString(thePot));
-                    getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
-                    //SystemClock.sleep(1000);
-                    try {
-                        Thread.sleep(500);
-                    }
-                    catch(InterruptedException e1)
-                    {
-
-                    }
-                    thePot += Integer.parseInt(hold1);
-                    pot.setText(Integer.toString(thePot));
-                    getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
-                    //SystemClock.sleep(1000);
-                    getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
 
                     determineWinner(hands);
                     turnMarker++;
@@ -295,162 +326,282 @@ public class MainActivity extends AppCompatActivity {
         }
 
         ;
-
-        public void Dealer(Drawable[][] d, int[][][] h) {
+//******************************************************************************************************************************************
+        public void Dealer(Drawable[][] d, int[][][] h, int[][] cardVals) {
 
             for (int x = 0; x < 20; x++) {
                 Random random1 = new Random();
                 int r1 = (random1.nextInt(12));
                 int r2 = (random1.nextInt(4));
-                if (d[r2][r1] == null) {
+                if (cardVals[r2][r1] == -1) {
                     for (int g = 0; g < 52; g++) {
                         r1 = (random1.nextInt(12));
                         r2 = (random1.nextInt(4));
-                        if (d[r2][r1] != null) {
+                        if (cardVals[r2][r1] != -1) {
                             g = 53;
                         }
                     }
                 }
                 if (x == 0 || x == 4 || x == 8 || x == 12 || x == 16) {
                     if (x == 0) {
-                        playerCard1.setVisibility(View.VISIBLE);
-                        getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
+                        playerCard1.setVisibility(View.INVISIBLE);
+                        playerCard1.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                playerCard1.setVisibility(View.VISIBLE);
+                            }
+                        }, 1000);
+
 
                         h[0][0][0] = r2;
                         h[0][0][1] = r1;
                         playerCard1.setImageDrawable(d[r2][r1]);
 
 
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 4) {
-                        playerCard2.setVisibility(View.VISIBLE);
+                        playerCard2.setVisibility(View.INVISIBLE);
+                        playerCard2.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                playerCard2.setVisibility(View.VISIBLE);
+                            }
+                        }, 2000);
 
                         h[0][1][0] = r2;
                         h[0][1][1] = r1;
                         playerCard2.setImageDrawable(d[r2][r1]);
 
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 8) {
-                        playerCard3.setVisibility(View.VISIBLE);
+                        playerCard3.setVisibility(View.INVISIBLE);
+                        playerCard3.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                playerCard3.setVisibility(View.VISIBLE);
+                            }
+                        }, 3000);
                         h[0][2][0] = r2;
                         h[0][2][1] = r1;
                         playerCard3.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 12) {
-                        playerCard4.setVisibility(View.VISIBLE);
+                        playerCard4.setVisibility(View.INVISIBLE);
+                        playerCard4.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                playerCard4.setVisibility(View.VISIBLE);
+                            }
+                        }, 4000);
                         h[0][3][0] = r2;
                         h[0][3][1] = r1;
                         playerCard4.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 16) {
-                        playerCard5.setVisibility(View.VISIBLE);
+                        playerCard5.setVisibility(View.INVISIBLE);
+                        playerCard5.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                playerCard5.setVisibility(View.VISIBLE);
+                            }
+                        }, 5000);
                         h[0][4][0] = r2;
                         h[0][4][1] = r1;
                         playerCard5.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     }
                 } else if (x == 1 || x == 5 || x == 9 || x == 13 || x == 17) {
                     if (x == 1) {
-                        ai1Card1.setVisibility(View.VISIBLE);
+                        ai1Card1.setVisibility(View.INVISIBLE);
+                        ai1Card1.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ai1Card1.setVisibility(View.VISIBLE);
+                            }
+                        }, 1100);
                         h[1][0][0] = r2;
                         h[1][0][1] = r1;
                   //      ai1Card1.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 5) {
-                        ai1Card2.setVisibility(View.VISIBLE);
+                        ai1Card2.setVisibility(View.INVISIBLE);
+                        ai1Card2.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ai1Card2.setVisibility(View.VISIBLE);
+                            }
+                        }, 2100);
                         h[1][1][0] = r2;
                         h[1][1][1] = r1;
                   //      ai1Card2.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 9) {
-                        ai1Card3.setVisibility(View.VISIBLE);
+                        ai1Card3.setVisibility(View.INVISIBLE);
+                        ai1Card3.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ai1Card3.setVisibility(View.VISIBLE);
+                            }
+                        }, 3100);
                         h[1][2][0] = r2;
                         h[1][2][1] = r1;
                     //    ai1Card3.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 13) {
-                        ai1Card4.setVisibility(View.VISIBLE);
+                        ai1Card4.setVisibility(View.INVISIBLE);
+                        ai1Card4.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ai1Card4.setVisibility(View.VISIBLE);
+                            }
+                        }, 4100);
                         h[1][3][0] = r2;
                         h[1][3][1] = r1;
                    //     ai1Card4.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 17) {
-                        ai1Card5.setVisibility(View.VISIBLE);
+                        ai1Card5.setVisibility(View.INVISIBLE);
+                        ai1Card5.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ai1Card5.setVisibility(View.VISIBLE);
+                            }
+                        }, 5100);
                         h[1][4][0] = r2;
                         h[1][4][1] = r1;
                   //      ai1Card5.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     }
                 } else if (x == 2 || x == 6 || x == 10 || x == 14 || x == 18) {
                     if (x == 2) {
-                        ai2Card1.setVisibility(View.VISIBLE);
+                        ai2Card1.setVisibility(View.INVISIBLE);
+                        ai2Card1.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ai2Card1.setVisibility(View.VISIBLE);
+                            }
+                        }, 1200);
                         h[2][0][0] = r2;
                         h[2][0][1] = r1;
                   //      ai2Card1.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 6) {
-                        ai2Card2.setVisibility(View.VISIBLE);
+                        ai2Card2.setVisibility(View.INVISIBLE);
+                        ai2Card2.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ai2Card2.setVisibility(View.VISIBLE);
+                            }
+                        }, 2200);
                         h[2][1][0] = r2;
                         h[2][1][1] = r1;
                       //  ai2Card2.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 10) {
-                        ai2Card3.setVisibility(View.VISIBLE);
+                        ai2Card3.setVisibility(View.INVISIBLE);
+                        ai2Card3.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ai2Card3.setVisibility(View.VISIBLE);
+                            }
+                        }, 3200);
                         h[2][2][0] = r2;
                         h[2][2][1] = r1;
                       //  ai2Card3.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 14) {
-                        ai2Card4.setVisibility(View.VISIBLE);
+                        ai2Card4.setVisibility(View.INVISIBLE);
+                        ai2Card4.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ai2Card4.setVisibility(View.VISIBLE);
+                            }
+                        }, 4200);
                         h[2][3][0] = r2;
                         h[2][3][1] = r1;
                      //   ai2Card4.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 18) {
-                        ai2Card5.setVisibility(View.VISIBLE);
+                        ai2Card5.setVisibility(View.INVISIBLE);
+                        ai2Card5.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ai2Card5.setVisibility(View.VISIBLE);
+                            }
+                        }, 5200);
                         h[2][4][0] = r2;
                         h[2][4][1] = r1;
                       //  ai2Card5.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     }
                 } else if (x == 3 || x == 7 || x == 11 || x == 15 || x == 19) {
                     if (x == 3) {
-                        dealerCard1.setVisibility(View.VISIBLE);
+                        dealerCard1.setVisibility(View.INVISIBLE);
+                        dealerCard1.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dealerCard1.setVisibility(View.VISIBLE);
+                            }
+                        }, 1300);
                         h[3][0][0] = r2;
                         h[3][0][1] = r1;
                     //    dealerCard1.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 7) {
-                        dealerCard2.setVisibility(View.VISIBLE);
+                        dealerCard2.setVisibility(View.INVISIBLE);
+                        dealerCard2.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dealerCard2.setVisibility(View.VISIBLE);
+                            }
+                        }, 2300);
                         h[3][1][0] = r2;
                         h[3][1][1] = r1;
                    //     dealerCard2.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 11) {
-                        dealerCard3.setVisibility(View.VISIBLE);
+                        dealerCard3.setVisibility(View.INVISIBLE);
+                        dealerCard3.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dealerCard3.setVisibility(View.VISIBLE);
+                            }
+                        }, 3300);
                         h[3][2][0] = r2;
                         h[3][2][1] = r1;
                      //   dealerCard3.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 15) {
-                        dealerCard4.setVisibility(View.VISIBLE);
+                        dealerCard4.setVisibility(View.INVISIBLE);
+                        dealerCard4.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dealerCard4.setVisibility(View.VISIBLE);
+                            }
+                        }, 4300);
                         h[3][3][0] = r2;
                         h[3][3][1] = r1;
                         //dealerCard4.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     } else if (x == 19) {
-                        dealerCard5.setVisibility(View.VISIBLE);
+                        dealerCard5.setVisibility(View.INVISIBLE);
+                        dealerCard5.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dealerCard5.setVisibility(View.VISIBLE);
+                            }
+                        }, 5300);
                         h[3][4][0] = r2;
                         h[3][4][1] = r1;
                         //dealerCard5.setImageDrawable(d[r2][r1]);
-                        d[r2][r1] = null;
+                        cardVals[r2][r1] = -1;
                     }
                 }
             }
 
         }
 
-
+//***********************************************************************************************************************************************
         public ImageView[] getMarks(View[] vbox) {
             ImageView[] holdBox = new ImageView[vbox.length];
             for (int g = 0; g < vbox.length - 1; g++) {
@@ -460,7 +611,7 @@ public class MainActivity extends AppCompatActivity {
 
             return holdBox;
         }
-
+//***********************************************************************************************************************************************
       public void determineWinner(int[][][] h)
       {
           int pcWinholder=0;
@@ -471,72 +622,157 @@ public class MainActivity extends AppCompatActivity {
           //player Calc
           for(int pm = 0; pm < 4; pm++)
           {
+              if(h[0][pm][1] != 0)
              pcWinholder += h[0][pm][1];
+              else if(h[0][pm][1] == 10)
+              {
+                  pcWinholder += 12;
+              }
+              else if(h[0][pm][1] == 11)
+              {
+                  pcWinholder += 13;
+              }
+              else if(h[0][pm][1] == 12)
+              {
+                  pcWinholder += 14;
+              }
+              else if (h[0][pm][1] == 0)
+                  pcWinholder += 15;
           }
           for(int ai1 = 0; ai1 < 4; ai1++)
           {
+              if(h[1][ai1][1] != 0)
               ai1winHolder += h[1][ai1][1];
+              else if(h[0][ai1][1] == 10)
+              {
+                  ai1winHolder += 12;
+              }
+              else if(h[0][ai1][1] == 11)
+              {
+                  ai1winHolder += 13;
+              }
+              else if(h[0][ai1][1] == 12)
+              {
+                  ai1winHolder += 14;
+              }
+              else if (h[0][ai1][1] == 0)
+                  ai1winHolder += 15;
+
           }
           for(int ai2 = 0; ai2 < 4; ai2++)
           {
+              if(h[2][ai2][1] != 0)
               ai2winHolder += h[2][ai2][1];
+              else if(h[0][ai2][1] == 10)
+              {
+                  ai2winHolder += 12;
+              }
+              else if(h[0][ai2][1] == 11)
+              {
+                  ai2winHolder += 13;
+              }
+              else if(h[0][ai2][1] == 12)
+              {
+                  ai2winHolder += 14;
+              }
+              else if (h[0][ai2][1] == 0)
+                  ai2winHolder+=15;
           }
           for(int dw = 0; dw < 4; dw++)
           {
+              if(h[3][dw][1] != 0)
               dealWinholder += h[3][dw][1];
+              else if(h[0][dw][1] == 10)
+              {
+                  dealWinholder += 12;
+              }
+              else if(h[0][dw][1] == 11)
+              {
+                  dealWinholder += 13;
+              }
+              else if(h[0][dw][1] == 12)
+              {
+                  dealWinholder += 14;
+              }
+              else if (h[0][dw][1] == 0)
+                  dealWinholder += 15;
           }
-          if (pcWinholder <= ai1winHolder || pcWinholder <= ai2winHolder || pcWinholder <= dealWinholder || ai1winHolder <= ai2winHolder || ai1winHolder <= dealWinholder || ai2winHolder <= dealWinholder)
+
+              pcWinholder = winSuperLogic(pcWinholder, 0, hands);
+
+
+
+              ai1winHolder = winSuperLogic(ai1winHolder, 1, hands);
+
+              ai2winHolder = winSuperLogic(ai2winHolder, 2, hands);
+
+              dealWinholder = winSuperLogic(dealWinholder, 3, hands);
+
+          if (pcWinholder > ai1winHolder && pcWinholder > ai2winHolder && pcWinholder > dealWinholder)
+          {
+            status.setText("You Win.");
+          }
+          else if (ai1winHolder > pcWinholder && ai1winHolder > ai2winHolder && ai1winHolder > dealWinholder)
+          {
+            status.setText("Left Computer Player Wins.");
+          }
+          else if (ai2winHolder > pcWinholder && ai2winHolder > ai1winHolder && ai2winHolder > dealWinholder)
+          {
+              status.setText("Right Computer Player Wins.");
+          }
+          else if (dealWinholder> pcWinholder && dealWinholder > ai1winHolder &&  dealWinholder > ai2winHolder)
+          {
+           status.setText("Dealer wins");
+          }
+          else if (pcWinholder <= ai1winHolder || pcWinholder <= ai2winHolder || pcWinholder <= dealWinholder || ai1winHolder <= ai2winHolder || ai1winHolder <= dealWinholder || ai2winHolder <= dealWinholder)
           {
               if((pcWinholder <= ai1winHolder && pcWinholder > ai2winHolder && pcWinholder > dealWinholder) || (pcWinholder > ai1winHolder && pcWinholder <= ai2winHolder && pcWinholder > dealWinholder) || (pcWinholder > ai1winHolder && pcWinholder > ai2winHolder && pcWinholder <= dealWinholder) )
               {
                   if ((pcWinholder <= ai1winHolder && pcWinholder > ai2winHolder && pcWinholder > dealWinholder))
                   {
-                      pcWinholder += winSuperLogic(pcWinholder,0,hands);
-                      ai1winHolder += winSuperLogic(ai1winHolder,1,hands);
+
                       if(pcWinholder > ai1winHolder)
                       {
-                          pot.setText("You Win.");
+                          status.setText("You Win.");
                       }
                       else if (pcWinholder < ai1winHolder)
                       {
-                          pot.setText("Left Computer Player Wins.");
+                          status.setText("Left Computer Player Wins.");
                       }
                       else {
-                          pot.setText("Draw");
+                          status.setText("Draw between you and left");
                       }
 
 
                   }
                   else if (pcWinholder > ai1winHolder && pcWinholder <= ai2winHolder && pcWinholder > dealWinholder)
                   {
-                      pcWinholder += winSuperLogic(pcWinholder,0,hands);
-                      ai2winHolder += winSuperLogic(ai2winHolder,2,hands);
+
                       if(pcWinholder > ai2winHolder)
                       {
-                          pot.setText("You Win.");
+                          status.setText("You Win.");
                       }
                       else if (pcWinholder < ai2winHolder)
                       {
-                          pot.setText("Right Computer Player Wins.");
+                          status.setText("Right Computer Player Wins.");
                       }
                       else {
-                          pot.setText("Draw");
+                          status.setText("Draw between you and right");
                       }
                   }
                   else if (pcWinholder > ai1winHolder && pcWinholder > ai2winHolder && pcWinholder <= dealWinholder)
                   {
-                      pcWinholder += winSuperLogic(pcWinholder,0,hands);
-                      dealWinholder += winSuperLogic(dealWinholder ,3,hands);
+
                       if(pcWinholder > dealWinholder )
                       {
-                          pot.setText("You Win.");
+                          status.setText("You Win.");
                       }
                       else if (pcWinholder < dealWinholder )
                       {
-                          pot.setText("Dealer Wins.");
+                          status.setText("Dealer Wins.");
                       }
                       else {
-                          pot.setText("Draw");
+                          status.setText("Draw you and dealer");
                       }
 
                   }
@@ -545,36 +781,34 @@ public class MainActivity extends AppCompatActivity {
               {
                   if ((ai1winHolder <= ai2winHolder && ai1winHolder > dealWinholder))
                   {
-                      ai1winHolder += winSuperLogic(ai1winHolder,1,hands);
-                      ai2winHolder += winSuperLogic(ai2winHolder,2,hands);
+
                       if(ai1winHolder > ai2winHolder)
                       {
-                          pot.setText("Left Computer Player Wins.");
+                          status.setText("Left Computer Player Wins.");
                       }
                       else if (ai1winHolder < ai2winHolder)
                       {
-                          pot.setText("Right Computer Player Wins.");
+                          status.setText("Right Computer Player Wins.");
                       }
                       else {
-                          pot.setText("Draw");
+                          status.setText("Draw Between Left and Right");
                       }
 
 
                   }
                   else if ((pcWinholder > ai2winHolder && pcWinholder <= dealWinholder))
                   {
-                      ai1winHolder += winSuperLogic(ai1winHolder,1,hands);
-                      dealWinholder += winSuperLogic(ai2winHolder,3,hands);
+
                       if(ai1winHolder > dealWinholder)
                       {
-                          pot.setText("Left Computer Player Wins.");
+                          status.setText("Left Computer Player Wins.");
                       }
                       else if (ai1winHolder < dealWinholder)
                       {
-                          pot.setText("DealerWins.");
+                          status.setText("DealerWins.");
                       }
                       else {
-                          pot.setText("Draw");
+                          status.setText("Draw between Right and Dealer");
                       }
 
 
@@ -583,109 +817,155 @@ public class MainActivity extends AppCompatActivity {
               else if (ai2winHolder <= dealWinholder)
               {
 
-                      ai2winHolder += winSuperLogic(ai2winHolder,2,hands);
-                      dealWinholder += winSuperLogic(dealWinholder,3,hands);
-                      if(ai2winHolder > ai2winHolder)
-                      {
-                          pot.setText("Left Computer Player Wins.");
-                      }
-                      else if (ai2winHolder < dealWinholder)
-                      {
-                          pot.setText("Right Computer Player Wins.");
-                      }
-                      else {
-                          pot.setText("Draw");
-                      }
 
-
+                  if(ai2winHolder > ai2winHolder)
+                  {
+                      status.setText("Right Computer Player Wins.");
+                  }
+                  else if (ai2winHolder < dealWinholder)
+                  {
+                      status.setText("Dealer Player Wins.");
+                  }
+                  else {
+                      status.setText("Draw between Left and Dealer");
                   }
 
+
+              }
+
+
           }
-          else if (pcWinholder > ai1winHolder && pcWinholder > ai2winHolder && pcWinholder > dealWinholder)
+          for(int end = 0; end < 5; end++)
           {
-            pot.setText("You Win.");
-          }
-          else if (ai1winHolder > pcWinholder && ai1winHolder > ai2winHolder && ai1winHolder > dealWinholder)
-          {
-            pot.setText("Left Computer Player Wins.");
-          }
-          else if (ai2winHolder > pcWinholder && ai2winHolder > ai1winHolder && ai2winHolder > dealWinholder)
-          {
-              pot.setText("Right Computer Player Wins.");
-          }
-          else if (dealWinholder> pcWinholder && dealWinholder > ai1winHolder &&  dealWinholder > ai2winHolder)
-          {
-            pot.setText("Dealer wins");
+              // pcMaster[end].setVisibility(View.VISIBLE);
+              ai1Master[end].setImageDrawable(cardsMaster[h[1][end][0]][h[1][end][1]]);
+              ai2Master[end].setImageDrawable(cardsMaster[h[2][end][0]][h[2][end][1]]);
+              dealMaster[end].setImageDrawable(cardsMaster[h[3][end][0]][h[3][end][1]]);
           }
           btnDraw.setEnabled(false);
           btnDeal.setEnabled(false);
           btnBet.setEnabled(false);
           txtInput.setEnabled(false);
       }
-
+//***********************************************************************************************************************************************
     public int winSuperLogic (int a, int e, int [][][] h)
     {
-       // int mult1 = 0;
-       // int mult2 = 0;
+        int[] mult1  = new int[1];
+        int[] mult2  = new int[1];
+        int[] mult3  = new int[1];
+        int[] mult4  = new int[1];
+        int multcounter= 0;
         int multTot = 0;
+
         for(int w = 0; w<4; w++)
         {
             for(int c = 0; c<4;c++)
             {
                 if(w != c)
                 {
+                    if(h[e][w][1] == h[e][c][1])
+                    {
+                        multcounter++;
+                    }
                     if (h[e][w][1] == h[e][c][1] && multTot == 0)
                     {
-                        multTot = h[e][w][1] * h[e][c][1];
+                        if(h[e][w][1] != 0 || h[e][c][1] != 0 && h[e][w][1] == h[e][c][1]) {
+                            multTot = h[e][w][1] * h[e][c][1];
+                            mult1 = h[e][w];
+                            mult2 = h[e][c];
+                        }
+                        else if(h[e][w][1] == 0 && h[e][c][1] == 0 && h[e][w][1] == h[e][c][1]) {
+                            multTot = 21 * 21;
+                            mult1 = h[e][w];
+                            mult2 = h[e][c];
+                        }
+                        else if(h[e][w][1] == 10 && h[e][c][1] == 10 && h[e][w][1] == h[e][c][1]) {
+                            multTot = 13 * 13;
+                            mult1 = h[e][w];
+                            mult2 = h[e][c];
+                        }
+                        else if(h[e][w][1] == 11 && h[e][c][1] == 11 && h[e][w][1] == h[e][c][1]) {
+                                multTot = 15 * 15;
+                                mult1 = h[e][w];
+                                mult2 = h[e][c];
+                            }
+                        else if(h[e][w][1] == 12 && h[e][c][1] == 12 && h[e][w][1] == h[e][c][1]) {
+                                multTot = 19 * 19;
+                                mult1 = h[e][w];
+                                mult2 = h[e][c];
+                            }
                     }
                     else if (h[e][w][1] == h[e][c][1] && multTot != 0)
                     {
+                        if(h[e][w][1] != 0 || h[e][c][1] != 0 && h[e][w][1] == h[e][c][1] && h[e][c] != mult1 && h[e][w] != mult2 && h[e][c] != mult2 )
                         multTot *= h[e][w][1] * h[e][c][1];
+                        else if(h[e][w][1] == 0 && h[e][c][1] == 0 && h[e][w][1] == h[e][c][1]&& h[e][c] != mult1 && h[e][w] != mult2 && h[e][c] != mult2 )
+                            multTot *= 21*21;
+                        else if(h[e][w][1] == 10 && h[e][c][1] == 10 && h[e][w][1] == h[e][c][1]&& h[e][c] != mult1 && h[e][w] != mult2 && h[e][c] != mult2 )
+                            multTot *= 13*13;
+                        else if(h[e][w][1] == 11 && h[e][c][1] == 11 && h[e][w][1] == h[e][c][1]&& h[e][c] != mult1 && h[e][w] != mult2 && h[e][c] != mult2 )
+                            multTot *= 15*15;
+                        else if(h[e][w][1] == 12 && h[e][c][1] == 12 && h[e][w][1] == h[e][c][1]&& h[e][c] != mult1 && h[e][w] != mult2 && h[e][c] != mult2 )
+                            multTot *= 19*19;
+
                     }
                 }
-                else {
+                else if  (h[e][w][1] != h[e][c][1]) {
 
                 }
             }
 
             //asList(h).contains(v);
         }
-        a += multTot;
+
+        if(multTot != 0){
+        a += multTot * (multcounter/2);
+        return a;}
+        else{
         return a;
     }
+    }
+//*****************************************************************************************************************************************
+        public void playerRedealer(ImageView[] vbox, int[][][] h, Drawable[][] d, int[][] cardVals) {
 
-        public void playerRedealer(ImageView[] vbox, int[][][] h, Drawable[][] d) {
+            for (int p = 0; p < vbox.length; p++) {
+               // for (int x = 0; x < 5; x++) {
 
-            for (int p = 0; p < vbox.length - 1; p++) {
-                for (int x = 0; x < 4; x++) {
-
-                    if (vbox[p] == pcMaster[x]) {
-
+                  //  if (vbox[x] == pcMaster[p] && vbox[x]!=null) {
+                        if(vbox[p] != null)
+                        {
                         Random random1 = new Random();
                         int r1 = (random1.nextInt(12));
                         int r2 = (random1.nextInt(4));
-                        if (d[r2][r1] == null) {
+                        if (cardVals[r2][r1] == -1) {
                             for (int g = 0; g < 52; g++) {
                                 r1 = (random1.nextInt(12));
                                 r2 = (random1.nextInt(4));
                                 if (d[r2][r1] != null) {
+                                    for(int x = 0; x <5; x++) {
+                                        if(vbox[p] == pcMaster[x]) {
+                                            h[0][x][0] = r2;
+                                            h[0][x][1] = r1;
+                                        }
+                                    }
+                                    vbox[p].setImageDrawable(d[r2][r1]);
+                                    cardVals[r2][r1]= -1;
                                     g = 53;
                                 }
                             }
-                        } else if (d[r2][r1] != null) {
-                            h[0][x][0] = r2;
-                            h[0][x][1] = r1;
-                            pcMaster[x].setImageDrawable(d[r2][r1]);
-                            d[r2][r1] = null;
+                        } else if (cardVals[r2][r1] != -1) {
+                            h[0][p][0] = r2;
+                            h[0][p][1] = r1;
+                            vbox[p].setImageDrawable(d[r2][r1]);
+                            cardVals[r2][r1] = -1;
                         }
                     } else {
 
                     }
 
-                }
+              //  }
             }
         }
 
 
     }
-

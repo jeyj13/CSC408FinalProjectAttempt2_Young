@@ -296,4 +296,11 @@
         android:onClick="pickingCards"
         android:clickable="true"
         android:visibility="invisible" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtWinStatus"
+        android:layout_alignTop="@+id/imgai24"
+        android:layout_alignEnd="@+id/imgdc4" />
 </RelativeLayout>
